@@ -2,7 +2,6 @@ package blacklist
 
 import (
 	"context"
-	"net"
 	"sync"
 	"time"
 
@@ -56,15 +55,24 @@ func (r *whitelistReceiver) Start(ctx context.Context, host component.Host) erro
 	defer httpticker.Stop()
 	r.settings.Logger.Info("HTTP Ticker created")
 
-	r.settings.Logger.Info("Checking http connection...")
-	conn, err := net.DialTimeout("tcp", "www.google.com:80", 3*time.Second)
-	if err != nil {
-		r.settings.Logger.Info("port closed")
-		return err
-	}
-	defer conn.Close()
-	r.settings.Logger.Info("port open")
-	return nil
+	var wg sync.WaitGroup
+		for {
+				select {
+				case <-httpticker.C:
+						// Run the receiver's logic here
+						r.settings.Logger.Info("Running receiver logic...")
+						wg.Add(1)
+						go func() {
+								// Run the receiver's logic here
+								r.settings.Logger.Info("Running inside logic...")
+								wg.Done()
+						}()
+						wg.Wait()
+				case <-ctx.Done():
+						httpticker.Stop()
+						return nil
+				}
+		}
 }
 
 
