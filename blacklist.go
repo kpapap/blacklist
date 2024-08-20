@@ -31,15 +31,12 @@ func newWhitelistReceiver(ctx context.Context, cfg *Config, nextConsumer consume
 		nextConsumer:	nextConsumer,
 		settings:			settings,
 	}
-	// Proceed to the next receiver.
-	go func() {
-		logs := plog.NewLogs()
-		err := r.nextConsumer.ConsumeLogs(ctx, logs)
-		if err != nil {
-			// Handle the error
-			r.settings.Logger.Sugar().Errorf("error consuming logs: %v", err.Error())
+	logs := plog.NewLogs()
+	err := r.nextConsumer.ConsumeLogs(ctx, logs)
+	if err != nil {
+		// Handle the error
+		r.settings.Logger.Sugar().Errorf("error consuming logs: %v", err.Error())
 		}
-	}()
 	return r, nil
 }
 
