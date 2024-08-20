@@ -1,4 +1,4 @@
-module github.com/kpapap/whitelist
+module github.com/kpapap/blacklist
 
 go 1.22.4
 
