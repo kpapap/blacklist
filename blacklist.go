@@ -8,7 +8,6 @@ import (
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
-	"go.opentelemetry.io/collector/pdata/plog"
 	"go.opentelemetry.io/collector/receiver"
 )
 
@@ -31,12 +30,6 @@ func newWhitelistReceiver(ctx context.Context, cfg *Config, nextConsumer consume
 		nextConsumer:	nextConsumer,
 		settings:			settings,
 	}
-	logs := plog.NewLogs()
-	err := r.nextConsumer.ConsumeLogs(ctx, logs)
-	if err != nil {
-		// Handle the error
-		r.settings.Logger.Sugar().Errorf("error consuming logs: %v", err.Error())
-		}
 	return r, nil
 }
 
