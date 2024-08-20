@@ -56,23 +56,17 @@ func (r *whitelistReceiver) Start(ctx context.Context, host component.Host) erro
 	defer httpticker.Stop()
 	r.settings.Logger.Info("HTTP Ticker created")
 
-	// Check connection
-	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case <-httpticker.C:
-			r.settings.Logger.Info("Checking http connection...")
-			conn, err := net.DialTimeout("tcp", "www.google.com:80", 3*time.Second)
-			if err != nil {
-				r.settings.Logger.Info("port closed")
-				return err
-			}
-			defer conn.Close()
-			r.settings.Logger.Info("port open")
-		}
+	r.settings.Logger.Info("Checking http connection...")
+	conn, err := net.DialTimeout("tcp", "www.google.com:80", 3*time.Second)
+	if err != nil {
+		r.settings.Logger.Info("port closed")
+		return err
 	}
+	defer conn.Close()
+	r.settings.Logger.Info("port open")
+	return nil
 }
+
 
 // Shutdown the receiver
 func (r *whitelistReceiver) Shutdown(ctx context.Context) error {
